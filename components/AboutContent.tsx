@@ -21,7 +21,7 @@ import {
 const HERO_EYEBROW = "501(c)(3) NONPROFIT ORGANIZATION";
 const HERO_HEADLINE = "Building Brighter Futures for Houston's Students";
 const HERO_SUB =
-  "Marber Learning Foundation is dedicated to closing academic gaps for K–12 students across the Greater Houston area through personalized tutoring and family support.";
+  "Marber Learning Foundation is dedicated to closing academic gaps for K–12 students across Alief, Stafford, Sugar Land, Richmond, and Missouri City through personalized tutoring and family support.";
 
 const STORY_TITLE = "Our Story";
 const STORY_BODY =
@@ -182,7 +182,7 @@ export default function AboutContent() {
                 <div className="flex items-center gap-2 mb-3">
                   <MapPin size={18} className="text-accent-mint" />
                   <p className="font-bold text-text-dark">
-                    Proudly Serving Fort Bend County &amp; Alief
+                    Proudly Serving Alief, Stafford &amp; Fort Bend
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
