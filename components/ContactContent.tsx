@@ -64,8 +64,11 @@ export default function ContactContent() {
     phone: "",
     reason: "",
     message: "",
+    website: "", // honeypot — real users never fill this in
   });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -73,14 +76,31 @@ export default function ContactContent() {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setError(null);
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.error || "Something went wrong. Please try again.");
+      }
+      setSubmitted(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const reset = () => {
     setSubmitted(false);
-    setForm({ firstName: "", lastName: "", email: "", phone: "", reason: "", message: "" });
+    setForm({ firstName: "", lastName: "", email: "", phone: "", reason: "", message: "", website: "" });
   };
 
   return (
@@ -170,6 +190,18 @@ export default function ContactContent() {
                 </motion.div>
               ) : (
                 <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+                  {/* Honeypot — hidden from real users, bots often fill every field */}
+                  <input
+                    type="text"
+                    name="website"
+                    value={form.website}
+                    onChange={handleChange}
+                    tabIndex={-1}
+                    autoComplete="off"
+                    className="hidden"
+                    aria-hidden="true"
+                  />
+
                   {/* Name */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="flex flex-col gap-1.5">
@@ -279,12 +311,19 @@ export default function ContactContent() {
                     />
                   </div>
 
+                  {error && (
+                    <p className="text-sm text-red-600" role="alert">
+                      {error}
+                    </p>
+                  )}
+
                   <button
                     type="submit"
-                    className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-light text-white px-8 py-4 rounded-full font-bold text-base transition-all duration-200 shadow-md hover:shadow-lg mt-2 min-h-[44px] focus:outline-none focus:ring-2 focus:ring-primary/40 w-full sm:w-auto"
+                    disabled={submitting}
+                    className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary-light text-white px-8 py-4 rounded-full font-bold text-base transition-all duration-200 shadow-md hover:shadow-lg mt-2 min-h-[44px] focus:outline-none focus:ring-2 focus:ring-primary/40 w-full sm:w-auto disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     <Send size={18} />
-                    Send Message
+                    {submitting ? "Sending…" : "Send Message"}
                   </button>
                 </form>
               )}
