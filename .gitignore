@@ -40,6 +40,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# claude
+# local-only, not for git
 CLAUDE.md
 AGENTS.md
