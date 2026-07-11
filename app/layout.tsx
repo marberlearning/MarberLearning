@@ -23,6 +23,7 @@ export const metadata: Metadata = {
     description:
       "In-person tutoring for K-12 students. Certified tutors, personalized plans, and flexible scheduling. Book a free consultation today.",
     type: "website",
+    images: ["/logo.png"],
   },
 };
 
